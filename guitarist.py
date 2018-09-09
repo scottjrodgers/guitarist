@@ -11,6 +11,7 @@ Main Guitarist program
 
 from guitar import Guitar
 from sequencer import Sequencer
+from song_objects import *
 
 
 def read_tab(fname):
@@ -78,6 +79,6 @@ def play_tab(fname):
                 t += 0.19
     seq.play()
 
+
 if __name__ == "__main__":
     play_tab("tab/sample.tab")
-

@@ -81,7 +81,10 @@ class Beat:
 class Measure:
     def __init__(self, section):
         self.section = section
-        self.prev = section.last_measure()
+        if section is not None:
+            self.prev = section.last_measure()
+        else:
+            self.prev = None
         self.next = None
         self.measure_number = section.add_measure(self)
         self.beats = list()
@@ -114,6 +117,8 @@ class Section:
     def __init__(self, song, name):
         self.song = song
         self.name = name
+        if song is not None:
+            self.song.add_section(self)
         self.strings = [NotationString(self, i) for i in range(7)]  # ignore zero and use strings 1 through 6
         self.measures = list()
 
