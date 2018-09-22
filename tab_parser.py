@@ -29,28 +29,50 @@ class TabParser:
         self.bar = '|'
         self.thumb_over = 'T'
 
+    @staticmethod
+    def cross_section(tab, i):
+        section = []
+        for row in tab:
+            if i < len(row):
+                section.append(row[i])
+            else:
+                section.append(' ')
+        return section
+
     def handle_phrase(self, tab):
-        print("Handling Phrase:")
-        for line in tab:
-            print(line)
+        # walk through the tab one column at a time
+        # figure out which rows are strings, and which rows are which strings
+        # recognize paterns in the set of characters in a vertical cross section of the tab
+
+        n_rows = len(tab)
+
+        for i in range(max([len(x) for x in tab])):
+            section = self.cross_section(tab, i)
+            print(section)
+
+
+        # print("Handling Phrase:")
+        # for line in tab:
+        #     print(line.replace("\n", ""))
 
     def parse(self, fname):
         with open(fname, "r") as f:
             tab_phrase = None
             for line in f:
+                line = line.replace('\n', '')
                 stripped_line = line.strip()
                 colon_idx = stripped_line.find(":")
                 if colon_idx > 0:
                     key = stripped_line[0:colon_idx].strip()
-                    value = stripped_line[(colon_idx + 1): ].strip()
+                    value = stripped_line[(colon_idx + 1):].strip()
 
                     if key == 'SONG':
                         self.song.title = value
                     elif key == 'BY':
                         self.song.by = value
                     elif key == 'TUNING':
-                        value = value.replace("[","").replace("]","")
-                        toks = value[1:-1].split(' ')
+                        value = value.replace("[", "").replace("]", "")
+                        toks = value.split(' ')
                         tuning = list()
                         for tok in toks:
                             if len(tok) > 0:
@@ -102,8 +124,9 @@ class TabParser:
                             print("line: '{}' not recognized.".format(line))
                     else:
                         # blank line
-                        self.handle_phrase(tab_phrase)
-                        tab_phrase = None
+                        if tab_phrase is not None:
+                            self.handle_phrase(tab_phrase)
+                            tab_phrase = None
 
 
 if __name__ == "__main__":
