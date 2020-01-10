@@ -39,21 +39,58 @@ class TabParser:
                 section.append(' ')
         return section
 
+    @staticmethod
+    def is_numbers(strings):
+        num_digits = 0
+        for ch in strings:
+            if ch.isdigit():
+                num_digits += 1
+            elif ch != '-':
+                return False
+        return num_digits > 0
+
+    def tokenize_strings(self, strings):
+        if strings == ['|','|','|','|','|','|']:
+            return "bar"
+        elif strings == ['-','-','*','*','-','-']:
+            return "dots"
+        elif strings == ['-','-','-','-','-','-']:
+            return "gap"
+        elif self.is_numbers(strings):
+            return "numbers"
+        else:
+            return "unknown"
+
     def handle_phrase(self, tab):
         # walk through the tab one column at a time
         # figure out which rows are strings, and which rows are which strings
         # recognize paterns in the set of characters in a vertical cross section of the tab
 
-        n_rows = len(tab)
+        # Understand rows above and below the strings
+        section = self.cross_section(tab, 0)
+        rows_above = 0
+        rows_below = 0
+        found_strings = False
+        for ch in section:
+            if ch != "|":
+                if not found_strings:
+                    rows_above += 1
+                else:
+                    rows_below += 1
+            else:
+                found_strings = True
 
+        # tokenize the cross-sections
+        sections = list()
         for i in range(max([len(x) for x in tab])):
             section = self.cross_section(tab, i)
-            print(section)
+            strings = section[rows_above:(len(tab) - rows_below)]
 
-
-        # print("Handling Phrase:")
-        # for line in tab:
-        #     print(line.replace("\n", ""))
+            token = self.tokenize_strings(strings)
+            sections.append([token, strings, section])
+            # if token == 'unknown':
+            #     token = '*** UNKNOWN ***-------------------------------------------'
+            # print("{} - {}".format(strings, token))
 
     def parse(self, fname):
         with open(fname, "r") as f:

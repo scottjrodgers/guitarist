@@ -74,9 +74,9 @@ def play_tab(fname):
 
             guitar.play(seq, t, notes)
             if ch == ',':
-                t += 0.25
+                t += 0.24
             else:
-                t += 0.19
+                t += 0.18
     seq.play()
 
 
